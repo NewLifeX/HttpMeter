@@ -5,7 +5,11 @@ using NewLife.Threading;
 
 namespace NewLife.HttpMeter
 {
-    /// <summary>测试管理器</summary>
+    /// <summary>泛型压测管理器。支持指定自定义工作者</summary>
+    /// <typeparam name="TWorker"></typeparam>
+    public class MeterManager<TWorker> : MeterManager where TWorker : MeterWorker, new() { }
+
+    /// <summary>压测管理器</summary>
     public class MeterManager
     {
         #region 属性
@@ -18,20 +22,26 @@ namespace NewLife.HttpMeter
 
         #region 方法
         /// <summary>开始压测</summary>
-        public void Execute()
+        public virtual void Execute()
         {
             var cfg = Options;
 
-            _Counter = new PerfCounter();
-            _Timer = new TimerX(ShowStat, null, 3_000, 5_000) { Async = true };
-            var sw = Stopwatch.StartNew();
+            var stat = new MeterStat();
+            stat.Start();
+            _Stat = stat;
+
+            _Timer = new TimerX(ShowStat, null, 1_000, 1_000);
 
             // 多线程
             var ws = new List<MeterWorker>();
             var ts = new List<Task<Int32>>();
             for (var i = 0; i < cfg.Concurrency; i++)
             {
-                var worker = new MeterWorker { Options = cfg, Tracer = Tracer };
+                var worker = CreateWorker();
+                worker.Options = cfg;
+                worker.Stat = stat;
+                worker.Tracer = Tracer;
+
                 ws.Add(worker);
 
                 var task = Task.Run(async () => await worker.StartAsync());
@@ -41,26 +51,46 @@ namespace NewLife.HttpMeter
             Console.WriteLine("{0:n0} 个并发已就绪", ws.Count);
             var total = Task.WhenAll(ts.ToArray()).Result.Sum();
 
+            var sw = stat.Watch;
             sw.Stop();
 
             Console.WriteLine("完成：{0:n0}", total);
 
             var ms = sw.Elapsed.TotalMilliseconds;
             Console.WriteLine("速度：{0:n0}tps", total * 1000L / ms);
+
+            _Timer.SetNext(-1);
+            Thread.Sleep(1000);
+            _Timer.TryDispose();
+            _Timer = null;
         }
 
-        private Int32 _SessionCount;
-        private ICounter _Counter;
+        /// <summary>创建工作者。支持重载实现自定义工作者</summary>
+        /// <returns></returns>
+        protected virtual MeterWorker CreateWorker() => new();
+
+        private MeterStat _Stat;
         private TimerX _Timer;
-        private String _LastStat;
+        private Int32 _lastTotal;
+        private Int64 _lastCost;
 
         private void ShowStat(Object state)
         {
-            var str = _Counter.ToString();
-            if (_LastStat == str) return;
-            _LastStat = str;
+            var st = _Stat;
+            var cfg = Options;
 
-            XTrace.WriteLine("连接：{0:n0} 收发：{1}", _SessionCount, str);
+            var total = st.Times + st.Errors;
+            var p = (Double)total / (cfg.Concurrency * cfg.Times);
+
+            var times = total - _lastTotal;
+            var cost = st.Cost - _lastCost;
+            var speed = times * 1000 / st.Watch.ElapsedMilliseconds;
+            var latency = times == 0 ? 0 : (cost / times);
+
+            _lastTotal = total;
+            _lastCost = st.Cost;
+
+            XTrace.WriteLine("已完成 {0:p2}  速度 {1:n0}tps  延迟 {2:n0}ms", p, speed, latency);
         }
         #endregion
 

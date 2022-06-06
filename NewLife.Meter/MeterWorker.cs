@@ -1,8 +1,5 @@
-﻿using System.Net;
-using NewLife.Collections;
-using NewLife.Data;
+﻿using System.Diagnostics;
 using NewLife.Log;
-using NewLife.Net;
 
 namespace NewLife.HttpMeter;
 
@@ -12,6 +9,9 @@ public class MeterWorker
     #region 属性
     /// <summary>可选项</summary>
     public MeterOptions Options { get; set; }
+
+    /// <summary>统计信息</summary>
+    public MeterStat Stat { get; set; }
 
     /// <summary>链路追踪</summary>
     public ITracer Tracer { get; set; }
@@ -31,11 +31,24 @@ public class MeterWorker
 
             await Task.Yield();
 
+            var sw = new Stopwatch();
             var cfg = Options;
+            var stat = Stat;
             for (var k = 0; k < cfg.Times; k++)
             {
-                var rs = await client.GetStringAsync(cfg.Url);
-                count++;
+                sw.Reset();
+                sw.Restart();
+                try
+                {
+                    var rs = await client.GetStringAsync(cfg.Url);
+                    count++;
+
+                    stat.Inc(sw.ElapsedMilliseconds);
+                }
+                catch
+                {
+                    stat.IncError(sw.ElapsedMilliseconds);
+                }
 
                 if (cfg.Interval > 0)
                     await Task.Delay(cfg.Interval);
@@ -45,6 +58,7 @@ public class MeterWorker
         }
         catch (Exception ex)
         {
+            XTrace.WriteException(ex);
         }
 
         return count;
