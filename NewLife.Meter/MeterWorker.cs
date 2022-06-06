@@ -8,6 +8,9 @@ namespace NewLife.HttpMeter;
 public class MeterWorker
 {
     #region 属性
+    /// <summary>序号</summary>
+    public Int32 Index { get; set; }
+
     /// <summary>可选项</summary>
     public MeterOptions Options { get; set; }
 

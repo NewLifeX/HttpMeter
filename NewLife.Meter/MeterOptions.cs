@@ -16,8 +16,14 @@ public class MeterOptions
     /// <summary>间隔，默认0毫秒，持续发起请求</summary>
     public Int32 Interval { get; set; }
 
-    /// <summary>请求内容</summary>
-    public String Content { get; set; }
+    /// <summary>请求方法。GET/POST/PostJson，默认GET</summary>
+    public String Method { get; set; }
+
+    /// <summary>请求令牌。用于JWT鉴权</summary>
+    public String Token { get; set; }
+
+    /// <summary>POST提交的文件</summary>
+    public String File { get; set; }
     #endregion
 
     /// <summary>解析参数</summary>
@@ -49,10 +55,24 @@ public class MeterOptions
                         i++;
                     }
                     break;
-                case "-s":
+                case "-m":
                     if (i + 1 < args.Length)
                     {
-                        Content = args[i + 1];
+                        Method = args[i + 1];
+                        i++;
+                    }
+                    break;
+                case "-t":
+                    if (i + 1 < args.Length)
+                    {
+                        Token = args[i + 1];
+                        i++;
+                    }
+                    break;
+                case "-f":
+                    if (i + 1 < args.Length)
+                    {
+                        File = args[i + 1];
                         i++;
                     }
                     break;

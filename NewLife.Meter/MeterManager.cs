@@ -38,6 +38,7 @@ namespace NewLife.HttpMeter
             for (var i = 0; i < cfg.Concurrency; i++)
             {
                 var worker = CreateWorker();
+                worker.Index = i;
                 worker.Options = cfg;
                 worker.Stat = stat;
                 worker.Tracer = Tracer;
@@ -54,15 +55,15 @@ namespace NewLife.HttpMeter
             var sw = stat.Watch;
             sw.Stop();
 
+            _Timer.Period = -1;
+            _Timer.SetNext(-1);
+            _Timer = null;
+            Thread.Sleep(100);
+
             Console.WriteLine("完成：{0:n0}", total);
 
             var ms = sw.Elapsed.TotalMilliseconds;
             Console.WriteLine("速度：{0:n0}tps", total * 1000L / ms);
-
-            _Timer.SetNext(-1);
-            Thread.Sleep(1000);
-            _Timer.TryDispose();
-            _Timer = null;
         }
 
         /// <summary>创建工作者。支持重载实现自定义工作者</summary>
@@ -73,6 +74,7 @@ namespace NewLife.HttpMeter
         private TimerX _Timer;
         private Int32 _lastTotal;
         private Int64 _lastCost;
+        private Int64 _lastMs;
 
         private void ShowStat(Object state)
         {
@@ -82,13 +84,16 @@ namespace NewLife.HttpMeter
             var total = st.Times + st.Errors;
             var p = (Double)total / (cfg.Concurrency * cfg.Times);
 
+            var thisCost = st.Cost;
             var times = total - _lastTotal;
-            var cost = st.Cost - _lastCost;
-            var speed = times * 1000d / st.Watch.ElapsedMilliseconds;
+            var cost = thisCost - _lastCost;
+            var ms = st.Watch.ElapsedMilliseconds;
+            var speed = ms == _lastMs ? 0 : (times * 1000d / (ms - _lastMs));
             var latency = times == 0 ? 0 : (cost / times);
 
             _lastTotal = total;
-            _lastCost = st.Cost;
+            _lastCost = thisCost;
+            _lastMs = ms;
 
             XTrace.WriteLine("已完成 {0:p2}  速度 {1:n1}tps  延迟 {2:n0}ms", p, speed, latency);
         }
@@ -109,7 +114,9 @@ namespace NewLife.HttpMeter
             Console.WriteLine("\t-c  并发数。默认100用户");
             Console.WriteLine("\t-n  请求数。默认每用户请求10000次");
             Console.WriteLine("\t-i  间隔。间隔多少毫秒发一次请求");
-            Console.WriteLine("\t-s  字符串内容。支持0x开头十六进制");
+            Console.WriteLine("\t-m  方法。GET/POST/PostJson");
+            Console.WriteLine("\t-t  令牌。JWT令牌");
+            Console.WriteLine("\t-f  文件。POST数据");
 
             Console.ResetColor();
         }
@@ -128,10 +135,13 @@ namespace NewLife.HttpMeter
             Console.WriteLine("请求：{0:n0}", cfg.Times);
             Console.WriteLine("并发：{0:n0}", cfg.Concurrency);
 
-            if (!cfg.Content.IsNullOrEmpty())
-                Console.WriteLine("内容：[{0:n0}] {1}", cfg.Content.Length, cfg.Content[..100]);
+            if (!cfg.Method.IsNullOrEmpty())
+                Console.WriteLine("方法：{0:n0}", cfg.Method);
 
             if (cfg.Interval > 0) Console.WriteLine("间隔：{0:n0}", cfg.Interval);
+
+            if (!cfg.File.IsNullOrEmpty())
+                Console.WriteLine("文件：{0}", cfg.File);
 
             Console.ResetColor();
             Console.WriteLine();

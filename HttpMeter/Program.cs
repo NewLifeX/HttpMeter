@@ -32,3 +32,4 @@ catch (Exception ex)
 {
     XTrace.WriteException(ex);
 }
+Console.ResetColor();
