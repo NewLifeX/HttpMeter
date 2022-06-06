@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpMeter", "HttpMeter\HttpMeter.csproj", "{4524D1A1-E1B2-494F-940A-9274727608FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewLife.HttpMeter", "NewLife.Meter\NewLife.HttpMeter.csproj", "{3F2A9CBC-F897-4AC3-983B-E9BBD28CC07F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Others", "Others", "{6A76278F-6131-499F-91C0-7270F6BD5631}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\publish-beta.yml = .github\workflows\publish-beta.yml
+		.github\workflows\publish.yml = .github\workflows\publish.yml
+		Readme.MD = Readme.MD
+		.github\workflows\test.yml = .github\workflows\test.yml
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XUnitTest", "XUnitTest\XUnitTest.csproj", "{0141DBEB-3E6B-4232-B5E2-BADC7D90257D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4524D1A1-E1B2-494F-940A-9274727608FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4524D1A1-E1B2-494F-940A-9274727608FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4524D1A1-E1B2-494F-940A-9274727608FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4524D1A1-E1B2-494F-940A-9274727608FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F2A9CBC-F897-4AC3-983B-E9BBD28CC07F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F2A9CBC-F897-4AC3-983B-E9BBD28CC07F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F2A9CBC-F897-4AC3-983B-E9BBD28CC07F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F2A9CBC-F897-4AC3-983B-E9BBD28CC07F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0141DBEB-3E6B-4232-B5E2-BADC7D90257D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0141DBEB-3E6B-4232-B5E2-BADC7D90257D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0141DBEB-3E6B-4232-B5E2-BADC7D90257D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0141DBEB-3E6B-4232-B5E2-BADC7D90257D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B260DF69-627E-43F5-8A40-8E759D8F0F40}
+	EndGlobalSection
+EndGlobal
