@@ -41,8 +41,4 @@
     <Content Include="..\Doc\leaf.png" Link="leaf.png" PackagePath="\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="NewLife.Stardust" Version="2.2.2022.601" />
-  </ItemGroup>
-
 </Project>

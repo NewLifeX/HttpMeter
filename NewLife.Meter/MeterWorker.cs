@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using NewLife.Http;
 using NewLife.Log;
 
 namespace NewLife.HttpMeter;
@@ -28,6 +29,7 @@ public class MeterWorker
             {
                 Timeout = TimeSpan.FromSeconds(15)
             };
+            client.SetUserAgent();
 
             await Task.Yield();
 

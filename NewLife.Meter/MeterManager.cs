@@ -84,13 +84,13 @@ namespace NewLife.HttpMeter
 
             var times = total - _lastTotal;
             var cost = st.Cost - _lastCost;
-            var speed = times * 1000 / st.Watch.ElapsedMilliseconds;
+            var speed = times * 1000d / st.Watch.ElapsedMilliseconds;
             var latency = times == 0 ? 0 : (cost / times);
 
             _lastTotal = total;
             _lastCost = st.Cost;
 
-            XTrace.WriteLine("已完成 {0:p2}  速度 {1:n0}tps  延迟 {2:n0}ms", p, speed, latency);
+            XTrace.WriteLine("已完成 {0:p2}  速度 {1:n1}tps  延迟 {2:n0}ms", p, speed, latency);
         }
         #endregion
 

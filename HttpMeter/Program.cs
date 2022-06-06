@@ -1,7 +1,6 @@
 ﻿using NewLife;
 using NewLife.HttpMeter;
 using NewLife.Log;
-using Stardust;
 
 XTrace.UseConsole();
 
@@ -22,8 +21,8 @@ try
         manager.ShowHelp();
     else
     {
-        var star = new StarFactory();
-        manager.Tracer = star.Tracer;
+        //var star = new StarFactory();
+        //manager.Tracer = star.Tracer;
 
         manager.ShowHeader();
         manager.Execute();
