@@ -10,16 +10,20 @@ namespace NewLife.HttpMeter;
 public class MeterWorker
 {
     #region 属性
+    /// <summary>可选项</summary>
     public MeterOptions Options { get; set; }
+
+    /// <summary>链路追踪</summary>
+    public ITracer Tracer { get; set; }
     #endregion
 
+    /// <summary>开始工作</summary>
+    /// <returns></returns>
     public async Task<Int32> StartAsync()
     {
         var count = 0;
         try
         {
-            //Interlocked.Increment(ref _SessionCount);
-
             var client = new HttpClient
             {
                 Timeout = TimeSpan.FromSeconds(15)
@@ -42,8 +46,6 @@ public class MeterWorker
         catch (Exception ex)
         {
         }
-
-        //Interlocked.Decrement(ref _SessionCount);
 
         return count;
     }
