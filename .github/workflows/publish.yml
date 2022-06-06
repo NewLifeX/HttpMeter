@@ -19,9 +19,11 @@ jobs:
     - name: Restore
       run: |
         dotnet restore NewLife.HttpMeter/NewLife.HttpMeter.csproj
+        dotnet restore HttpMeter/HttpMeter.csproj
     - name: Build
       run: |
         dotnet pack --no-restore --version-suffix $(date "+%Y.%m%d") -c Release -o out NewLife.HttpMeter/NewLife.HttpMeter.csproj
+        dotnet pack --no-restore --version-suffix $(date "+%Y.%m%d") -c Release -o out HttpMeter/HttpMeter.csproj
     - name: Publish
       run: |
         dotnet nuget push ./out/*.nupkg --skip-duplicate --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.nugetKey }}
