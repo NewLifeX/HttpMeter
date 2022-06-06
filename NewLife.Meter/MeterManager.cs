@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net;
 using NewLife.Log;
 using NewLife.Reflection;
 using NewLife.Threading;
@@ -25,6 +26,8 @@ namespace NewLife.HttpMeter
         public virtual void Execute()
         {
             var cfg = Options;
+
+            ServicePointManager.DefaultConnectionLimit = 10000;
 
             var stat = new MeterStat();
             stat.Start();
@@ -116,7 +119,8 @@ namespace NewLife.HttpMeter
             Console.WriteLine("\t-i  间隔。间隔多少毫秒发一次请求");
             Console.WriteLine("\t-m  方法。GET/POST/PostJson");
             Console.WriteLine("\t-t  令牌。JWT令牌");
-            Console.WriteLine("\t-f  文件。POST数据");
+            Console.WriteLine("\t-f  文件。POST文件数据");
+            Console.WriteLine("\t-s  内容。POST内容数据");
 
             Console.ResetColor();
         }

@@ -74,11 +74,17 @@ public class MeterWorker
     /// <summary>初始化环境，执行准备工作</summary>
     protected virtual Task InitAsync()
     {
-        var client = new HttpClient
+        var handler = new HttpClientHandler
+        {
+            UseProxy = false,
+            MaxConnectionsPerServer = 100,
+        };
+        var client = new HttpClient(handler)
         {
             Timeout = TimeSpan.FromSeconds(15)
         };
         client.SetUserAgent();
+        client.DefaultRequestHeaders.Connection.Add("keep-alive");
 
         var cfg = Options;
         if (!cfg.Token.IsNullOrEmpty())
@@ -88,7 +94,12 @@ public class MeterWorker
 
         _client = client;
 
-        if (!cfg.File.IsNullOrEmpty())
+        if (!cfg.Content.IsNullOrEmpty())
+        {
+            _body = cfg.Content.GetBytes();
+            _content = cfg.Content;
+        }
+        else if (!cfg.File.IsNullOrEmpty())
         {
             _body = File.ReadAllBytes(cfg.File.GetFullPath());
             _content = File.ReadAllText(cfg.File.GetFullPath());

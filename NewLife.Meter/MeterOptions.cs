@@ -24,6 +24,9 @@ public class MeterOptions
 
     /// <summary>POST提交的文件</summary>
     public String File { get; set; }
+
+    /// <summary>POST提交的内容</summary>
+    public String Content { get; set; }
     #endregion
 
     /// <summary>解析参数</summary>
@@ -73,6 +76,13 @@ public class MeterOptions
                     if (i + 1 < args.Length)
                     {
                         File = args[i + 1];
+                        i++;
+                    }
+                    break;
+                case "-s":
+                    if (i + 1 < args.Length)
+                    {
+                        Content = args[i + 1];
                         i++;
                     }
                     break;
