@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Net.Http.Headers;
+using System.Text;
 using NewLife.Http;
 using NewLife.Log;
 
@@ -66,6 +68,9 @@ public class MeterWorker
     }
 
     HttpClient _client;
+    Byte[] _body;
+    String _content;
+
     /// <summary>初始化环境，执行准备工作</summary>
     protected virtual Task InitAsync()
     {
@@ -75,7 +80,19 @@ public class MeterWorker
         };
         client.SetUserAgent();
 
+        var cfg = Options;
+        if (!cfg.Token.IsNullOrEmpty())
+        {
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cfg.Token);
+        }
+
         _client = client;
+
+        if (!cfg.File.IsNullOrEmpty())
+        {
+            _body = File.ReadAllBytes(cfg.File.GetFullPath());
+            _content = File.ReadAllText(cfg.File.GetFullPath());
+        }
 
         return Task.CompletedTask;
     }
@@ -88,6 +105,44 @@ public class MeterWorker
         var client = _client;
         var cfg = Options;
 
-        var rs = await client.GetStringAsync(cfg.Url);
+        switch (cfg.Method?.ToLower())
+        {
+            case "postjson":
+                {
+                    var request = new HttpRequestMessage(HttpMethod.Post, cfg.Url);
+                    if (!_content.IsNullOrEmpty())
+                    {
+                        // 简单的变量替换
+                        var txt = _content.Replace("{{index}}", Index + "");
+                        request.Content = new StringContent(txt, Encoding.UTF8, "application/json");
+                    }
+
+                    var response = await client.SendAsync(request);
+                    response.EnsureSuccessStatusCode();
+                    _ = await response.Content.ReadAsByteArrayAsync();
+
+                    break;
+                }
+            case "post":
+                {
+                    var request = new HttpRequestMessage(HttpMethod.Post, cfg.Url);
+                    if (_body != null)
+                        request.Content = new ByteArrayContent(_body);
+
+                    var response = await client.SendAsync(request);
+                    response.EnsureSuccessStatusCode();
+                    _ = await response.Content.ReadAsByteArrayAsync();
+
+                    break;
+                }
+            case "get":
+            default:
+                {
+                    // 简单的变量替换
+                    var url = cfg.Url.Replace("{{index}}", Index + "");
+                    _ = await client.GetStringAsync(url);
+                }
+                break;
+        }
     }
 }
