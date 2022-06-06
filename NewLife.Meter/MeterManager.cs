@@ -44,7 +44,7 @@ namespace NewLife.HttpMeter
 
                 ws.Add(worker);
 
-                var task = Task.Run(async () => await worker.StartAsync());
+                var task = Task.Run(async () => await worker.ExecuteAsync());
                 ts.Add(task);
             }
 

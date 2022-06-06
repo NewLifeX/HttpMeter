@@ -20,18 +20,14 @@ public class MeterWorker
 
     /// <summary>开始工作</summary>
     /// <returns></returns>
-    public async Task<Int32> StartAsync()
+    public virtual async Task<Int32> ExecuteAsync()
     {
+        await Task.Yield();
+
         var count = 0;
         try
         {
-            var client = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(15)
-            };
-            client.SetUserAgent();
-
-            await Task.Yield();
+            await InitAsync();
 
             var sw = new Stopwatch();
             var cfg = Options;
@@ -42,7 +38,7 @@ public class MeterWorker
                 sw.Restart();
                 try
                 {
-                    var rs = await client.GetStringAsync(cfg.Url);
+                    await ProcessAsync(k);
                     count++;
 
                     stat.Inc(sw.ElapsedMilliseconds);
@@ -64,5 +60,31 @@ public class MeterWorker
         }
 
         return count;
+    }
+
+    HttpClient _client;
+    /// <summary>初始化环境，执行准备工作</summary>
+    protected virtual Task InitAsync()
+    {
+        var client = new HttpClient
+        {
+            Timeout = TimeSpan.FromSeconds(15)
+        };
+        client.SetUserAgent();
+
+        _client = client;
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>处理单次请求</summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    protected virtual async Task ProcessAsync(Int32 index)
+    {
+        var client = _client;
+        var cfg = Options;
+
+        var rs = await client.GetStringAsync(cfg.Url);
     }
 }
