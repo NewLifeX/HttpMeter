@@ -77,7 +77,9 @@ public class MeterWorker
         var handler = new HttpClientHandler
         {
             UseProxy = false,
+#if NETSTANDARD
             MaxConnectionsPerServer = 100,
+#endif
         };
         var client = new HttpClient(handler)
         {

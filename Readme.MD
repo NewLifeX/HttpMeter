@@ -1,14 +1,14 @@
 ﻿# NewLife.HttpMeter - Http压力测试
 
-![GitHub top language](https://img.shields.io/github/languages/top/newlifex/newlife.httpmeter?logo=github)
-![GitHub License](https://img.shields.io/github/license/newlifex/newlife.httpmeter?logo=github)
+![GitHub top language](https://img.shields.io/github/languages/top/newlifex/httpmeter?logo=github)
+![GitHub License](https://img.shields.io/github/license/newlifex/httpmeter?logo=github)
 ![Nuget Downloads](https://img.shields.io/nuget/dt/newlife.httpmeter?logo=nuget)
 ![Nuget](https://img.shields.io/nuget/v/newlife.httpmeter?logo=nuget)
 ![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/newlife.httpmeter?label=dev%20nuget&logo=nuget)
 
 Http压力测试套装。  
 
-源码： https://github.com/NewLifeX/NewLife.HttpMeter  
+源码： https://github.com/NewLifeX/HttpMeter  
 Nuget：NewLife.HttpMeter  
 
 ## 新生命项目矩阵
