@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <AssemblyTitle>Http压力测试</AssemblyTitle>
     <Description>Http压力测试工具</Description>
     <Company>新生命开发团队</Company>
