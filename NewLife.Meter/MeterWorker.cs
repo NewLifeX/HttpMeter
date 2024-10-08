@@ -1,8 +1,12 @@
 ﻿using System.Diagnostics;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using NewLife.Http;
 using NewLife.Log;
+#if !NET45
+using TaskEx = System.Threading.Tasks.Task;
+#endif
 
 namespace NewLife.HttpMeter;
 
@@ -107,7 +111,7 @@ public class MeterWorker
             _content = File.ReadAllText(cfg.File.GetFullPath());
         }
 
-        return Task.CompletedTask;
+        return TaskEx.CompletedTask;
     }
 
     /// <summary>处理单次请求</summary>
